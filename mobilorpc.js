@@ -1,3 +1,19 @@
+
+
+
+   // detector de dispositivo (pc + móvil)
+   // por dani
+
+
+
+
+
+
+
+
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const isMobile = {
         Android: () => navigator.userAgent.match(/Android/i),
@@ -271,14 +287,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 250);
     });
 
-    // Menú hamburguesa - solo desktop
-    const menuBtn = document.querySelector('.hamburger-btn');
-    const menuContenido = document.querySelector('.menu-contenido');
-    const modalProblema = document.getElementById('modalProblema');
-    const reportarProblema = document.getElementById('reportarProblema');
-    const cerrarModal = document.querySelector('.cerrar-modal');
-
+    // Menú hamburguesa
     if (deviceType === 'desktop') {
+        const menuBtn = document.querySelector('.hamburger-btn');
+        const menuContenido = document.querySelector('.menu-contenido');
+        const modalProblema = document.getElementById('modalProblema');
+        const reportarProblema = document.getElementById('reportarProblema');
+        const cerrarModal = document.querySelector('.cerrar-modal');
+
         if (menuBtn && menuContenido) {
             menuBtn.style.display = 'block';
 
@@ -320,9 +336,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     } else {
-        // Ocultar elementos del menú en móvil
-        if (menuBtn) menuBtn.style.display = 'none';
-        if (menuContenido) menuContenido.style.display = 'none';
+        // Ocultar menú en móviles
+        document.querySelectorAll('.menu-hamburguesa, .hamburger-btn, .menu-contenido').forEach(el => {
+            if (el) el.style.display = 'none';
+        });
     }
 });
 
