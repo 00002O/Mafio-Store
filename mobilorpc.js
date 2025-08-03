@@ -272,14 +272,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Menú hamburguesa - solo desktop
-    if (deviceType === 'desktop') {
-        const menuBtn = document.querySelector('.hamburger-btn');
-        const menuContenido = document.querySelector('.menu-contenido');
-        const modalProblema = document.getElementById('modalProblema');
-        const reportarProblema = document.getElementById('reportarProblema');
-        const cerrarModal = document.querySelector('.cerrar-modal');
+    const menuBtn = document.querySelector('.hamburger-btn');
+    const menuContenido = document.querySelector('.menu-contenido');
+    const modalProblema = document.getElementById('modalProblema');
+    const reportarProblema = document.getElementById('reportarProblema');
+    const cerrarModal = document.querySelector('.cerrar-modal');
 
+    if (deviceType === 'desktop') {
         if (menuBtn && menuContenido) {
+            menuBtn.style.display = 'block';
+
             // Asegurar que el botón tenga contenido inicial
             menuBtn.innerHTML = '☰';
 
@@ -317,6 +319,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
         }
+    } else {
+        // Ocultar elementos del menú en móvil
+        if (menuBtn) menuBtn.style.display = 'none';
+        if (menuContenido) menuContenido.style.display = 'none';
     }
 });
 
