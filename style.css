@@ -177,7 +177,7 @@ nav a:hover::after {
 }
 
 .estado-disponibilidad.disponible {
-  background: rgba(40, 192, 136, 0.344);
+  background: rgba(40, 192, 136, 0.164);
   border-color: #28c087;
 }
 
@@ -352,7 +352,7 @@ footer {
 
 /* Opcional, para que el texto quede más destacado */
 .estado-disponibilidad.disponible {
-  color: #035034;
+  color: #06f69e;
 }
 
 .estado-disponibilidad.no-disponible {
