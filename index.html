@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mafio Clothes</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="img/logo/logo2.png">
+  <link rel="shortcut icon" type="image/png" href="img/logo/logo2.png">
+</head>
+
+<body>
+  <div class="contenedor-superior">
+  <header>
+
+    <div class="encabezado-flex">
+
+      <img src="img/logo/MAFIOS-03-08-2025.png" alt="Logo Mafio_Clothes" class="logo" />
+
+      
+
+    </div>
+    
+  </header>
+
+  <nav>
+    <a href="#inicio">Inicio</a>
+    <a href="#galeria">Galería</a>
+    <a href="https://www.instagram.com/mafio_clothes/" target="_blank">Instagram</a>
+    <a href="#formulario-y-video">Video Presentación</a>
+    <div class="menu-hamburguesa">
+      <button id="menuBtn" class="hamburger-btn">☰</button>
+      <div class="menu-contenido">
+        <a href="#" id="reportarProblema">Reportar Problema</a>
+        <a href="#" id="contactoBtn">Contacto</a>
+        <a href="mailto:mafio.clothes@gmail.com">Email</a>
+        <a href="https://discord.gg/PvaXgFpw89">Discord</a>
+      </div>
+    </div>
+  </nav>
+</div>
+
+
+<!-- INICIO DE PRODUCTOS -->
+<div id="productos-contenedor">
+  <!-- El contenido de products.html se cargará aquí -->
+</div>
+
+<!-- GALERÍA -->
+<div id="galeria-contenedor">
+  <!-- El contenido de gallery.html se cargará aquí -->
+</div>
+
+<script>
+  // Cargar productos y galería
+  Promise.all([
+    fetch('products.html').then(response => response.text()),
+    fetch('gallery.html').then(response => response.text())
+  ]).then(([productsContent, galleryContent]) => {
+    document.getElementById('productos-contenedor').innerHTML = productsContent;
+    document.getElementById('galeria-contenedor').innerHTML = galleryContent;
+    
+    // Inicializar la funcionalidad de la galería después de cargarla
+    const botonGaleria = document.getElementById('mostrarGaleria');
+    const galeriaImagenes = document.getElementById('imagenesGaleria');
+    
+    if (botonGaleria && galeriaImagenes) {
+      botonGaleria.addEventListener('click', function() {
+        const esVisible = galeriaImagenes.style.display === "grid";
+        
+        if (esVisible) {
+          galeriaImagenes.style.opacity = "0";
+          setTimeout(() => {
+            galeriaImagenes.style.display = "none";
+          }, 300);
+        } else {
+          galeriaImagenes.style.display = "grid";
+          setTimeout(() => {
+            galeriaImagenes.style.opacity = "1";
+          }, 10);
+        }
+        
+        this.textContent = esVisible ? "Ver galería" : "Ocultar galería";
+      });
+    }
+  }).catch(error => {
+    console.error('Error loading content:', error);
+  });
+</script>
+
+
+<section class="seccion-flexible" id="formulario-y-video">
+  <div class="contenedor-flex">
+    <!-- FORMULARIO -->
+    <div id="formulario-envios">
+      <h2>Si necesitas envíos</h2>
+      <p>Para realizar un envío, necesito que ingreses tus datos aquí:</p>
+
+      <form id="formulario-envio">
+        <input type="text" name="nombre" placeholder="Ingresa tu nombre completo" required>
+        <input type="email" name="correo" placeholder="Escribe tu correo electrónico" required>
+        <input type="text" name="direccion" placeholder="Escribe tu dirección" required>
+        <input type="text" name="retiro" placeholder="¿Sucursal o a domicilio?" required>
+        <input type="tel" name="telefono" placeholder="Ingresa tu número telefónico" required>
+        <input type="text" name="region" placeholder="Ingresa tu región" required>
+        <input type="text" name="prenda" placeholder="Ingresa la prenda" required>
+        <button type="submit">Enviar</button>
+      </form>
+
+      <div id="mensaje-exito" style="display: none; margin-top: 20px; text-align: center; background: #28c087; color: white; padding: 15px; border-radius: 10px;">
+        ✅ ¡Gracias por tu compra! Me pondré en contacto contigo a la brevedad para coordinar el envío de tu paquete. ¡Que lo disfrutes!
+      </div>
+    </div>
+
+    <!-- VIDEO -->
+    <div class="video-lateral">
+      <h2>Video de Presentación</h2>
+      <div class="video-wrapper">
+        <iframe 
+          src="https://www.youtube.com/embed/VvBZGhbcvZ4?rel=0&modestbranding=1"
+          title="Presentación Mafio_Clothes"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCRIPT DE ENVÍO DE FORMULARIO -->
+<script>
+document.getElementById("formulario-envio").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const form = e.target;
+  const datos = new FormData(form);
+
+  try {
+    const res = await fetch("https://formspree.io/f/xnnvgpov", {
+      method: "POST",
+      body: datos,
+      headers: { 'Accept': 'application/json' }
+    });
+
+    if (res.ok) {
+      form.reset();
+      document.getElementById("mensaje-exito").style.display = "block";
+    } else {
+      alert("Hubo un problema al enviar el formulario.");
+    }
+  } catch (error) {
+    alert("Error de red. Reintentá en unos segundos.");
+  }
+});
+</script>
+
+<!-- MODAL PARA REPORTAR PROBLEMAS -->
+<div id="modalProblema" class="modal">
+  <div class="modal-contenido">
+    <span class="cerrar-modal">&times;</span>
+    <h2>Reportar un Problema</h2>
+    <form id="formularioProblema">
+      <input type="text" placeholder="Describe el problema" required>
+      <textarea placeholder="Detalles adicionales"></textarea>
+      <button type="submit">Enviar Reporte</button>
+    </form>
+  </div>
+</div>
+
+<script src="mobilorpc.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
