@@ -1,15 +1,5 @@
-
-
-
-   // detector de dispositivo (pc + móvil)
+// detector de dispositivo (pc + móvil)
    // por dani
-
-
-
-
-
-
-
 
 
 
@@ -83,13 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
         let scrollLeft;
 
         nav.addEventListener('touchstart', (e) => {
+            if (e.target.closest('.imagen-galeria')) return; // No interferir con imágenes de galería
             isScrolling = true;
             startX = e.touches[0].pageX - nav.offsetLeft;
             scrollLeft = nav.scrollLeft;
         });
 
         nav.addEventListener('touchmove', (e) => {
-            if (!isScrolling) return;
+            if (!isScrolling || e.target.closest('.imagen-galeria')) return;
             e.preventDefault();
             const x = e.touches[0].pageX - nav.offsetLeft;
             const walk = (x - startX) * 2;
@@ -112,12 +103,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Optimizar galería para móvil
         const gallery = document.querySelector('.grid-gallery');
         if (gallery) {
-            // Cargar imágenes de forma lazy
             const images = gallery.querySelectorAll('img');
             images.forEach(img => {
                 img.loading = 'lazy';
+                img.style.touchAction = 'none'; // Mejorar gestos táctiles
                 
-                // Prevenir comportamiento de zoom del navegador
+                // Prevenir zoom del navegador
                 img.addEventListener('touchstart', (e) => {
                     if (e.touches.length > 1) {
                         e.preventDefault();
@@ -127,101 +118,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Mejorar rendimiento del scroll
             gallery.style.webkitOverflowScrolling = 'touch';
+            gallery.style.willChange = 'transform';
         }
 
-        // Optimizar botón de galería
-        const galleryButton = document.querySelector('.boton-galeria');
-        if (galleryButton) {
-            galleryButton.addEventListener('touchstart', function() {
-                this.style.transform = 'scale(0.95)';
-            });
+        // Ajustar el zoom para móviles
+        if (typeof initializeZoom === 'function') {
+            const zoomOptions = {
+                maxZoom: 3,
+                doubleTapDelay: 300,
+                animationDuration: 200,
+                dragInertia: true
+            };
             
-            galleryButton.addEventListener('touchend', function() {
-                this.style.transform = 'scale(1)';
+            window.addEventListener('load', () => {
+                initializeZoom(zoomOptions);
             });
         }
-
-        // Funcionalidad del buscador móvil
-        const searchInput = document.getElementById('searchInput');
-        const searchClear = document.getElementById('searchClear');
-        const productos = document.querySelectorAll('.producto');
-        
-        // Crear contenedor de recomendaciones
-        const recommendations = document.createElement('div');
-        recommendations.className = 'recommendations';
-        searchInput.parentElement.appendChild(recommendations);
-
-        // Crear mensaje de no resultados
-        const noResults = document.createElement('div');
-        noResults.className = 'no-results';
-        noResults.textContent = 'No se encontraron productos';
-        recommendations.appendChild(noResults);
-
-        let lastSearchTerm = '';
-        let searchTimeout;
-
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            searchClear.style.display = searchTerm ? 'block' : 'none';
-
-            // Debounce para mejorar rendimiento
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                if (searchTerm === lastSearchTerm) return;
-                lastSearchTerm = searchTerm;
-
-                let found = false;
-                recommendations.innerHTML = '';
-
-                productos.forEach(producto => {
-                    const titulo = producto.querySelector('h2').textContent.toLowerCase();
-                    const precio = producto.querySelector('p:nth-child(2)').textContent.toLowerCase();
-                    const disponibilidad = producto.querySelector('.estado-disponibilidad').classList.contains('disponible');
-                    
-                    if (titulo.includes(searchTerm) || precio.includes(searchTerm)) {
-                        found = true;
-                        const item = document.createElement('div');
-                        item.className = 'recommendation-item';
-                        item.innerHTML = `
-                            <img src="${producto.querySelector('img').src}" alt="${titulo}">
-                            <div>
-                                <div>${producto.querySelector('h2').textContent}</div>
-                                <small>${precio}</small>
-                            </div>
-                        `;
-                        
-                        item.addEventListener('click', () => {
-                            producto.scrollIntoView({ behavior: 'smooth' });
-                            recommendations.style.display = 'none';
-                            producto.style.animation = 'highlight 1s ease';
-                        });
-                        
-                        recommendations.appendChild(item);
-                    }
-                    
-                    producto.style.display = searchTerm.length === 0 || 
-                        titulo.includes(searchTerm) || 
-                        precio.includes(searchTerm) ? 'block' : 'none';
-                });
-
-                recommendations.style.display = searchTerm.length > 0 ? 'block' : 'none';
-                noResults.style.display = !found && searchTerm.length > 0 ? 'block' : 'none';
-            }, 300);
-        });
-
-        searchClear.addEventListener('click', () => {
-            searchInput.value = '';
-            searchClear.style.display = 'none';
-            recommendations.style.display = 'none';
-            productos.forEach(producto => producto.style.display = 'block');
-        });
-
-        // Cerrar recomendaciones al hacer click fuera
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.search-wrapper')) {
-                recommendations.style.display = 'none';
-            }
-        });
     } else {
         // Ajustes específicos para desktop
         document.documentElement.style.setProperty('--base-font-size', '16px');
@@ -342,4 +254,82 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+        :root {
+            --base-font-size: ${deviceType === 'mobile' ? '14px' : '16px'};
+            --grid-columns: ${deviceType === 'mobile' ? '2' : '4'};
+            --content-width: ${deviceType === 'mobile' ? '100%' : '90%'};
+            --header-height: ${deviceType === 'mobile' ? '60px' : '80px'};
+        }
+    `;
+    
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = cssVars;
+    document.head.appendChild(styleSheet);
 
+    // Función para recargar ajustes en cambio de tamaño de ventana
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            const newDeviceType = window.innerWidth <= 768 ? 'mobile' : 'desktop';
+            if (newDeviceType !== deviceType) {
+                location.reload();
+            }
+        }, 250);
+    });
+
+    // Menú hamburguesa
+    if (deviceType === 'desktop') {
+        const menuBtn = document.querySelector('.hamburger-btn');
+        const menuContenido = document.querySelector('.menu-contenido');
+        const modalProblema = document.getElementById('modalProblema');
+        const reportarProblema = document.getElementById('reportarProblema');
+        const cerrarModal = document.querySelector('.cerrar-modal');
+
+        if (menuBtn && menuContenido) {
+            menuBtn.style.display = 'block';
+
+            // Asegurar que el botón tenga contenido inicial
+            menuBtn.innerHTML = '☰';
+
+            menuBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                menuContenido.classList.toggle('activo');
+                menuBtn.innerHTML = menuContenido.classList.contains('activo') ? '✕' : '☰';
+            });
+
+            // Cerrar al hacer clic fuera
+            document.addEventListener('click', (e) => {
+                if (!menuContenido.contains(e.target) && !menuBtn.contains(e.target)) {
+                    menuContenido.classList.remove('activo');
+                    menuBtn.innerHTML = '☰';
+                }
+            });
+
+            if (reportarProblema && modalProblema && cerrarModal) {
+                reportarProblema.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    modalProblema.style.display = 'block';
+                    menuContenido.classList.remove('activo');
+                    menuBtn.innerHTML = '☰';
+                });
+
+                cerrarModal.addEventListener('click', () => {
+                    modalProblema.style.display = 'none';
+                });
+
+                window.addEventListener('click', (e) => {
+                    if (e.target === modalProblema) {
+                        modalProblema.style.display = 'none';
+                    }
+                });
+            }
+        }
+    } else {
+        // Ocultar menú en móviles
+        document.querySelectorAll('.menu-hamburguesa, .hamburger-btn, .menu-contenido').forEach(el => {
+            if (el) el.style.display = 'none';
+        });
+    }
+});

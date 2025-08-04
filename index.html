@@ -1,7 +1,3 @@
-
-
-
-
 <!-- que estay sapeando waton -->
 <!-- jkasdjaskdk -->
 
@@ -85,6 +81,11 @@
     document.getElementById('productos-contenedor').innerHTML = productsContent;
     document.getElementById('galeria-contenedor').innerHTML = galleryContent;
     
+    // Inicializar zoom después de cargar la galería
+    if (typeof initializeZoom === 'function') {
+      initializeZoom();
+    }
+    
     // Inicializar la funcionalidad de la galería después de cargarla
     const botonGaleria = document.getElementById('mostrarGaleria');
     const galeriaImagenes = document.getElementById('imagenesGaleria');
@@ -113,6 +114,9 @@
   });
 </script>
 
+<!-- Cargar scripts en orden correcto -->
+<script src="mobilorpc.js"></script>
+<script src="zoom.js"></script>
 
 <section class="seccion-flexible" id="formulario-y-video">
   <div class="contenedor-flex">
@@ -193,7 +197,8 @@ document.getElementById("formulario-envio").addEventListener("submit", async fun
 </div>
 
 <script src="mobilorpc.js"></script>
-<script src="zoom.js"></script>
+<!-- Asegurarnos que zoom.js se carga después de mobilorpc.js -->
+<script src="zoom.js" defer></script>
 </body>
 </html>
 
