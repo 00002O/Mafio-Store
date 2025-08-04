@@ -1,7 +1,3 @@
-        // zoom funcionando, solo para pc
-
-
-
 document.addEventListener('DOMContentLoaded', () => {
     let currentZoom = 1;
     let currentX = 0;
@@ -343,3 +339,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
  // wea rara xddd
+
+ // zoom funcionando, solo para pc
