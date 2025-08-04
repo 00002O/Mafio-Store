@@ -134,6 +134,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 initializeZoom(zoomOptions);
             });
         }
+
+        // Añadir control de visibilidad del nav al hacer scroll
+        let lastScrollTop = 0;
+        const headerHeight = document.querySelector('header').offsetHeight;
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Determinar dirección del scroll
+            if (scrollTop > lastScrollTop && scrollTop > headerHeight) {
+                // Scrolling down - ocultar nav
+                nav.style.transform = 'translateY(-100%)';
+                nav.style.transition = 'transform 0.3s ease-in-out';
+            } else {
+                // Scrolling up - mostrar nav
+                nav.style.transform = 'translateY(0)';
+            }
+            
+            lastScrollTop = scrollTop;
+        }, { passive: true });
     } else {
         // Ajustes específicos para desktop
         document.documentElement.style.setProperty('--base-font-size', '16px');
@@ -253,83 +273,36 @@ document.addEventListener('DOMContentLoaded', () => {
             if (el) el.style.display = 'none';
         });
     }
-});
-        :root {
-            --base-font-size: ${deviceType === 'mobile' ? '14px' : '16px'};
-            --grid-columns: ${deviceType === 'mobile' ? '2' : '4'};
-            --content-width: ${deviceType === 'mobile' ? '100%' : '90%'};
-            --header-height: ${deviceType === 'mobile' ? '60px' : '80px'};
-        }
-    `;
-    
-    const styleSheet = document.createElement('style');
-    styleSheet.textContent = cssVars;
-    document.head.appendChild(styleSheet);
 
-    // Función para recargar ajustes en cambio de tamaño de ventana
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            const newDeviceType = window.innerWidth <= 768 ? 'mobile' : 'desktop';
-            if (newDeviceType !== deviceType) {
-                location.reload();
+    // Funcionalidad de búsqueda
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+
+    function performSearch() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const productos = document.querySelectorAll('.producto');
+
+        productos.forEach(producto => {
+            const titulo = producto.querySelector('h3').textContent.toLowerCase();
+            const descripcion = producto.querySelector('p').textContent.toLowerCase();
+            
+            if (titulo.includes(searchTerm) || descripcion.includes(searchTerm)) {
+                producto.style.display = '';
+                producto.style.opacity = '1';
+            } else {
+                producto.style.opacity = '0';
+                setTimeout(() => {
+                    producto.style.display = 'none';
+                }, 300);
             }
-        }, 250);
-    });
-
-    // Menú hamburguesa
-    if (deviceType === 'desktop') {
-        const menuBtn = document.querySelector('.hamburger-btn');
-        const menuContenido = document.querySelector('.menu-contenido');
-        const modalProblema = document.getElementById('modalProblema');
-        const reportarProblema = document.getElementById('reportarProblema');
-        const cerrarModal = document.querySelector('.cerrar-modal');
-
-        if (menuBtn && menuContenido) {
-            menuBtn.style.display = 'block';
-
-            // Asegurar que el botón tenga contenido inicial
-            menuBtn.innerHTML = '☰';
-
-            menuBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                menuContenido.classList.toggle('activo');
-                menuBtn.innerHTML = menuContenido.classList.contains('activo') ? '✕' : '☰';
-            });
-
-            // Cerrar al hacer clic fuera
-            document.addEventListener('click', (e) => {
-                if (!menuContenido.contains(e.target) && !menuBtn.contains(e.target)) {
-                    menuContenido.classList.remove('activo');
-                    menuBtn.innerHTML = '☰';
-                }
-            });
-
-            if (reportarProblema && modalProblema && cerrarModal) {
-                reportarProblema.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    modalProblema.style.display = 'block';
-                    menuContenido.classList.remove('activo');
-                    menuBtn.innerHTML = '☰';
-                });
-
-                cerrarModal.addEventListener('click', () => {
-                    modalProblema.style.display = 'none';
-                });
-
-                window.addEventListener('click', (e) => {
-                    if (e.target === modalProblema) {
-                        modalProblema.style.display = 'none';
-                    }
-                });
-            }
-        }
-    } else {
-        // Ocultar menú en móviles
-        document.querySelectorAll('.menu-hamburguesa, .hamburger-btn, .menu-contenido').forEach(el => {
-            if (el) el.style.display = 'none';
         });
     }
+
+    searchButton.addEventListener('click', performSearch);
+    searchInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
+    });
 });
+   

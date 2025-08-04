@@ -27,8 +27,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mafio Store</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="search.css" />
   <link rel="icon" type="image/png" href="img/logo/logo2.png">
   <link rel="shortcut icon" type="image/png" href="img/logo/logo2.png">
+  <script src="js/search.js" defer></script>
 </head>
 
 <body>
@@ -46,17 +48,26 @@
   </header>
 
   <nav>
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Buscar productos...">
+      <button id="searchButton">
+        <svg viewBox="0 0 24 24" width="20" height="20">
+          <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
+      </button>
+    </div>
     <a href="#inicio">Inicio</a>
     <a href="#galeria">Galería</a>
     <a href="https://www.instagram.com/mafio_clothes/" target="_blank">Instagram</a>
     <a href="#formulario-y-video">Video Presentación</a>
-    <div class="menu-hamburguesa">
+  </nav>
+    <!-- <div class="menu-hamburguesa">
       <button id="menuBtn" class="hamburger-btn">☰</button>
       <div class="menu-contenido">
         <a href="#" id="reportarProblema">Reportar Problema</a>
         <a href="https://www.instagram.com/mafio_l5e/" id="contactoBtn">Contacto Personal</a>
         <a href="https://discord.gg/PvaXgFpw89">Discord</a>
-      </div>
+      </div> --- >
     </div>
   </nav>
 </div>
@@ -116,8 +127,9 @@
 
 <!-- Cargar scripts en orden correcto -->
 <script src="mobilorpc.js"></script>
-<script src="zoom.js"></script>
+<script src="zoom.js" defer></script>
 
+<!-- Mover esta sección antes del cierre del body -->
 <section class="seccion-flexible" id="formulario-y-video">
   <div class="contenedor-flex">
     <!-- FORMULARIO -->
