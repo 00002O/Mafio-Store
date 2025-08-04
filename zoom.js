@@ -340,3 +340,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.sqrt(dx * dx + dy * dy);
     }
 });
+
+
+ // wea rara xddd
